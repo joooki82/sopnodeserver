@@ -9,10 +9,8 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const swaggerUi = require('swagger-ui-express');
 
-// Read OpenAPI YAML file
 const openapiSpecification = yaml.load(fs.readFileSync('./openapi.yaml', 'utf8'));
 
-// Serve Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 app.use(express.json());
