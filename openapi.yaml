@@ -4,10 +4,7 @@ info:
   version: 1.0.0
   description: A Node.js server interfacing with a PHP backend and MySQL database.
 servers:
-  - url: http://localhost:{port}
-    variables:
-      port:
-        default: '3000'
+  - url: http://localhost:3000
 paths:
   /register:
     post:
@@ -63,6 +60,12 @@ paths:
       responses:
         '200':
           description: A list of devices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
         '401':
           description: Unauthorized.
         '500':
@@ -76,8 +79,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              # Define the device schema here
+              $ref: '#/components/schemas/Device'
       responses:
         '201':
           description: Device created.
@@ -101,6 +103,10 @@ paths:
       responses:
         '200':
           description: Device details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
         '401':
           description: Unauthorized.
         '404':
@@ -123,8 +129,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              # Define the update schema here
+              $ref: '#/components/schemas/Device'
       responses:
         '200':
           description: Device updated.
@@ -156,6 +161,28 @@ paths:
           description: Server error.
 
 components:
+  schemas:
+    Device:
+      type: object
+      properties:
+        device_id:
+          type: integer
+          format: int64
+          description: Unique identifier for the device
+        device_type:
+          type: string
+          description: Type of the device
+        device_name:
+          type: string
+          description: Name of the device
+        status:
+          type: string
+          description: Current status of the device
+      required:
+        - device_type
+        - device_name
+        - status
+
   securitySchemes:
     bearerAuth:
       type: http
