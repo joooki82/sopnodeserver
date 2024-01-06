@@ -57,7 +57,6 @@ app.post('/register', async (req, res) => {
                 if (err.code === 'ER_DUP_ENTRY') {
                     return res.status(409).send({ message: 'Username already taken' });
                 } else {
-                    // Handle other errors
                     return res.status(500).send({ message: 'Error registering new user' });
                 }
             }
@@ -79,7 +78,6 @@ app.post('/login', async (req, res) => {
         return res.status(400).send({ message: 'Username and password are required' });
     }
 
-    // Query to find the user by username
     const query = 'SELECT * FROM users WHERE username = ?';
     connection.query(query, [username], async (err, results) => {
         if (err) {
@@ -94,7 +92,6 @@ app.post('/login', async (req, res) => {
 
         try {
             if (await bcrypt.compare(password, user.password)) {
-                // Create token
                 const token = jwt.sign({ username: user.username }, 'qwertzuiopasdfghjklyxcvbnm', { expiresIn: '1h' });
                 res.json({ token });
             } else {
@@ -191,7 +188,6 @@ app.listen(PORT, () => {
 });
 
 process.on('SIGINT', () => {
-    // Assuming 'connection' is your database connection
     connection.end(err => {
         if (err) {
             console.error('Error during database disconnection:', err.stack);
