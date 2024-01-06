@@ -70,7 +70,10 @@ app.post('/register', async (req, res) => {
 
 
 app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    const authHeader = req.headers['authorization'];
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [username, password] = credentials.split(':');
 
     if (!username || !password) {
         return res.status(400).send({ message: 'Username and password are required' });
@@ -108,6 +111,22 @@ app.post('/login', async (req, res) => {
 app.get('/devices/:id', authenticate, async (req, res) => {
     try {
         const response = await axios.get(`${PHP_API_BASE_URL}/devices/${req.params.id}`, {
+            headers: {
+                'Authorization': `Basic ${base64Credentials}`
+            }
+        });
+
+        res.json(response.data);
+    } catch (error) {
+        const status = error.response ? error.response.status : 500;
+        const data = error.response ? error.response.data : { message: 'Internal Server Error' };
+        res.status(status).json(data);
+    }
+});
+
+app.put('/devices/:id', authenticate, async (req, res) => {
+    try {
+        const response = await axios.put(`${PHP_API_BASE_URL}/devices/${req.params.id}`, req.body, {
             headers: {
                 'Authorization': `Basic ${base64Credentials}`
             }
@@ -159,7 +178,7 @@ app.get('/devices', authenticate, async (req, res) => {
                 'Authorization': `Basic ${base64Credentials}`
             }
         });
-        res.status(201).json(response.data);
+        res.status(200).json(response.data);
     } catch (error) {
         res.status(error.response.status).json(error.response.data);
     }
