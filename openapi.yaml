@@ -33,24 +33,26 @@ paths:
   /login:
     post:
       summary: Logs in a user and returns a token.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
+      description: Authenticates a user with Basic Authentication and returns a JWT token.
+      security:
+        - basicAuth: []
       responses:
         '200':
-          description: Successfully logged in.
+          description: Successfully logged in. Returns a JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token for authenticated sessions.
+        '400':
+          description: Username and password are required.
         '401':
           description: Invalid credentials.
         '500':
-          description: Server error.
+          description: Server error or login error.
 
   /devices:
     get:
@@ -188,3 +190,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+    basicAuth:
+      type: http
+      scheme: basic

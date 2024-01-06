@@ -15,8 +15,6 @@ const openapiSpecification = yaml.load(fs.readFileSync('./openapi.yaml', 'utf8')
 // Serve Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
-
-
 app.use(express.json());
 
 const dbConfig = {
